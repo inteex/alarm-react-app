@@ -1,0 +1,17 @@
+.clock__text {
+  display: flex;
+  justify-content: center;
+}
+
+.time {
+  font-size: var(--biggest-font-size);
+  font-weight: var(--font-medium);
+  color: var(--title-color);
+}
+
+
+.clock__date {
+  text-align: center;
+  font-size: var(--small-font-size);
+  font-weight: var(--font-medium);
+}
