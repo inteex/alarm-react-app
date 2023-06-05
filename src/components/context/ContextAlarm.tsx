@@ -1,4 +1,10 @@
 import React, { createContext, useEffect, useState } from "react";
+import {
+  addAlarmRequest,
+  deleteAlarmRequest,
+  getAlarmsRequest,
+  updateAlarmRequest,
+} from "../../api/alarm";
 import useFetch from "../../custom-hooks/useFetch";
 import months from "../../data";
 import { Alarm } from "../../models/alarm";
@@ -6,12 +12,10 @@ import { Alarm } from "../../models/alarm";
 
 interface AlarmContextType {
   date: Date;
-  alarmTime: Date | undefined;
   alarms: Alarm[];
-  setAlarmTime: (data: Date) => void;
-  toggleDisableAlarm: (id: number) => void;
+  updateAlarm: (alarm: Alarm) => void;
   deleteAlarm: (id: number) => void;
-  setAlarms: React.Dispatch<React.SetStateAction<Alarm[]>>;
+  addAlarm: (alarm: Partial<Alarm>) => void;
 }
 
 interface Props {
@@ -24,56 +28,77 @@ export const AlarmContext = createContext<AlarmContextType | null>(null);
 const AlarmProvider: React.FC<Props> = ({ children }) => {
   const [date, setDate] = useState<Date>(new Date());
   const [alarms, setAlarms] = useState<Alarm[]>([]);
-  const [alarmTime, setAlarmTime] = useState<Date>();
+
+  const fetchAlarms = async () => {
+    try {
+      const alarms: Alarm[] = await getAlarmsRequest();
+      setAlarms(alarms);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  const addAlarm = async (alarm: Partial<Alarm>) => {
+    try {
+      const alarmResponse: Alarm = await addAlarmRequest(alarm);
+      if (alarmResponse) {
+        fetchAlarms();
+      }
+    } catch (error) {}
+  };
+
+  const deleteAlarm = async (id: number) => {
+    try {
+      await deleteAlarmRequest(id);
+      fetchAlarms();
+    } catch (error) {
+      console.log("Failed to delete Alarm");
+    }
+  };
+
+  const updateAlarm = async (alarm: Alarm) => {
+    try {
+      await updateAlarmRequest(alarm);
+      fetchAlarms();
+    } catch (error) {
+      console.log("Failed to update Alarm");
+    }
+  };
 
   useEffect(() => {
     setInterval(() => {
       setDate(new Date());
     }, 1000);
-    setAlarms((alarms) => alarms);
   }, []);
 
   useEffect(() => {
-    const alarmToRing = alarms.find(
-      (alarm) =>
-        alarm.isActive &&
-        date.getHours() === alarm.hours &&
-        date.getMinutes() === alarm.minutes
-    );
+    fetchAlarms();
+  }, []);
+
+  useEffect(() => {
+    const alarmToRing =
+      alarms &&
+      alarms.find(
+        (alarm) =>
+          alarm.isActive &&
+          date.getHours().toString() === alarm.hours &&
+          date.getMinutes().toString() === alarm.minutes
+      );
     if (alarmToRing) {
-      toggleDisableAlarm(alarmToRing.id);
+      updateAlarm(alarmToRing);
       alert("ringing");
     }
-  }, [date]);
+  }, [alarms]);
 
-  const toggleDisableAlarm = (id: number) =>
-    setAlarms((existingAlarms) =>
-      existingAlarms.map((alarm) => {
-        if (alarm.id === id) {
-          return {
-            ...alarm,
-            isActive: !alarm.isActive,
-          };
-        }
-        return alarm;
-      })
-    );
-
-  const deleteAlarm = (id: number) =>
-    setAlarms((existingAlarms) =>
-      existingAlarms.filter((alarm) => alarm.id !== id)
-    );
 
   return (
     <AlarmContext.Provider
       value={{
         date,
-        alarmTime,
         alarms,
-        setAlarmTime,
-        toggleDisableAlarm,
+        updateAlarm,
         deleteAlarm,
-        setAlarms,
+        addAlarm,
       }}
     >
       {children}

@@ -4,27 +4,22 @@ import useSelect from "../../custom-hooks/useSelect";
 import { AlarmContext } from "../context/ContextAlarm";
 
 function AlarmOption() {
-  const { setAlarms, setAlarmTime } = useContext(AlarmContext)!;
+  const { addAlarm } = useContext(AlarmContext)!;
   const currentDate = new Date();
   const [hours, setHours] = useSelect(currentDate.getHours().toString());
   const [minutes, setMinutes] = useSelect(currentDate.getMinutes().toString());
 
   const minutesNumber = Array.from(Array(60).keys());
   const hourNumber = Array.from(Array(24).keys());
-  
+
   const setAlarm = () => {
     currentDate.setHours(parseInt(hours));
     currentDate.setMinutes(parseInt(minutes));
-    setAlarmTime(currentDate);
-    setAlarms((alarms)=> [
-      ...alarms,
-      {
-        id: alarms.length + 1,
-        hours: parseInt(hours),
-        minutes: parseInt(minutes),
-        isActive: true,
-      },
-    ]);
+    addAlarm({
+      hours: hours,
+      minutes: minutes,
+      isActive: true,
+    });
   };
 
   return (

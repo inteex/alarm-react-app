@@ -6,13 +6,8 @@ import { Alarm } from "../../models/alarm";
 import useFetch from "../../custom-hooks/useFetch";
 
 function Alarms() {
-  const { alarms, toggleDisableAlarm, deleteAlarm, setAlarms } =
+  const { alarms, updateAlarm, deleteAlarm } =
     useContext(AlarmContext)!;
-  const { loading, error, value } = useFetch<Alarm[]>("http://127.0.0.1:3001/alarms");
-
-  if (value) {
-    setAlarms(value);
-  }
 
   return (
     <div className="alarm-contianer">
@@ -23,7 +18,7 @@ function Alarms() {
             <input
               className="toggle"
               type="checkbox"
-              onChange={() => toggleDisableAlarm(alarm.id)}
+              onChange={() => updateAlarm(alarm)}
               checked={alarm.isActive}
             />
             <button onClick={() => deleteAlarm(alarm.id)}> X </button>

@@ -6,14 +6,14 @@ export default function useAsync<T = unknown>(
 ) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
-  const [value, setValue] = useState<T>();
+  const [data, setData] = useState<T>();
 
   const callbackMemoized = useCallback(() => {
     setLoading(true);
     setError(undefined);
-    setValue(undefined);
+    setData(undefined);
     callback()
-      .then(setValue)
+      .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
   }, dependencies);
@@ -22,5 +22,5 @@ export default function useAsync<T = unknown>(
     callbackMemoized();
   }, [callbackMemoized]);
 
-  return { loading, error, value };
+  return { loading, error, data };
 }
