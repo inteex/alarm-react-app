@@ -5,16 +5,20 @@ import { AlarmContext } from "../context/ContextAlarm";
 
 function AlarmOption() {
   const { addAlarm } = useContext(AlarmContext)!;
+
+  const formatTo2Digits = (value: number) =>
+    value.toLocaleString("fr-Fr", { minimumIntegerDigits: 2 });
+
   const currentDate = new Date();
-  const [hours, setHours] = useSelect(currentDate.getHours().toString());
-  const [minutes, setMinutes] = useSelect(currentDate.getMinutes().toString());
+  const [hours, setHours] = useSelect(formatTo2Digits(currentDate.getHours()));
+  const [minutes, setMinutes] = useSelect(
+    formatTo2Digits(currentDate.getMinutes())
+  );
 
   const minutesNumber = Array.from(Array(60).keys());
   const hourNumber = Array.from(Array(24).keys());
 
   const setAlarm = () => {
-    currentDate.setHours(parseInt(hours));
-    currentDate.setMinutes(parseInt(minutes));
     addAlarm({
       hours: hours,
       minutes: minutes,
@@ -30,8 +34,8 @@ function AlarmOption() {
             Hour
           </option>
           {hourNumber.map((hour, index) => (
-            <option key={index} value={hour}>
-              {hour.toLocaleString("fr-Fr", { minimumIntegerDigits: 2 })}
+            <option key={index} value={formatTo2Digits(hour)}>
+              {formatTo2Digits(hour)}
             </option>
           ))}
         </select>
@@ -40,8 +44,8 @@ function AlarmOption() {
             Minutes
           </option>
           {minutesNumber.map((minutes, index) => (
-            <option key={index} value={minutes}>
-              {minutes.toLocaleString("fr-Fr", { minimumIntegerDigits: 2 })}
+            <option key={index} value={formatTo2Digits(minutes)}>
+              {formatTo2Digits(minutes)}
             </option>
           ))}
         </select>

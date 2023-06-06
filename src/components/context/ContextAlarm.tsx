@@ -5,15 +5,14 @@ import {
   getAlarmsRequest,
   updateAlarmRequest,
 } from "../../api/alarm";
-import useFetch from "../../custom-hooks/useFetch";
-import months from "../../data";
 import { Alarm } from "../../models/alarm";
-// import Sound from "../../mixkit-casino-win-alarm-and-coins-1990.mp3";
 
 interface AlarmContextType {
   date: Date;
   alarms: Alarm[];
-  updateAlarm: (alarm: Alarm) => void;
+  ringingAlarm: Alarm | undefined;
+  setRingingAlarm: React.Dispatch<React.SetStateAction<Alarm | undefined>>;
+  updateAlarm: (alarm: Alarm) => Promise<void>;
   deleteAlarm: (id: number) => void;
   addAlarm: (alarm: Partial<Alarm>) => void;
 }
@@ -22,12 +21,12 @@ interface Props {
   children: React.ReactNode;
 }
 
-// const alarm = new Audio(Sound);
 export const AlarmContext = createContext<AlarmContextType | null>(null);
 
 const AlarmProvider: React.FC<Props> = ({ children }) => {
   const [date, setDate] = useState<Date>(new Date());
   const [alarms, setAlarms] = useState<Alarm[]>([]);
+  const [ringingAlarm, setringingAlarm] = useState<Alarm | undefined>();
 
   const fetchAlarms = async () => {
     try {
@@ -42,7 +41,7 @@ const AlarmProvider: React.FC<Props> = ({ children }) => {
     try {
       const alarmResponse: Alarm = await addAlarmRequest(alarm);
       if (alarmResponse) {
-        fetchAlarms();
+        await fetchAlarms();
       }
     } catch (error) {}
   };
@@ -50,7 +49,11 @@ const AlarmProvider: React.FC<Props> = ({ children }) => {
   const deleteAlarm = async (id: number) => {
     try {
       await deleteAlarmRequest(id);
-      fetchAlarms();
+      await fetchAlarms();
+      // unset ringingAlarm if we delet it when ringing
+      if (id === ringingAlarm?.id) {
+        setringingAlarm(undefined);
+      }
     } catch (error) {
       console.log("Failed to delete Alarm");
     }
@@ -58,44 +61,31 @@ const AlarmProvider: React.FC<Props> = ({ children }) => {
 
   const updateAlarm = async (alarm: Alarm) => {
     try {
-      await updateAlarmRequest(alarm);
-      fetchAlarms();
+      const updatedAlarm = await updateAlarmRequest(alarm);
+      await fetchAlarms();
+      // unset ringingAlarm if we disactivate it when ringing
+      if (updatedAlarm.id === ringingAlarm?.id && !updatedAlarm.isActive) {
+        setringingAlarm(undefined);
+      }
     } catch (error) {
       console.log("Failed to update Alarm");
     }
   };
 
   useEffect(() => {
+    fetchAlarms();
     setInterval(() => {
       setDate(new Date());
     }, 1000);
   }, []);
-
-  useEffect(() => {
-    fetchAlarms();
-  }, []);
-
-  useEffect(() => {
-    const alarmToRing =
-      alarms &&
-      alarms.find(
-        (alarm) =>
-          alarm.isActive &&
-          date.getHours().toString() === alarm.hours &&
-          date.getMinutes().toString() === alarm.minutes
-      );
-    if (alarmToRing) {
-      updateAlarm(alarmToRing);
-      alert("ringing");
-    }
-  }, [alarms]);
-
 
   return (
     <AlarmContext.Provider
       value={{
         date,
         alarms,
+        ringingAlarm,
+        setRingingAlarm: setringingAlarm,
         updateAlarm,
         deleteAlarm,
         addAlarm,

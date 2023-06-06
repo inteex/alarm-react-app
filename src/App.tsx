@@ -1,14 +1,10 @@
-import React from 'react';
-import './App.css';
-import AlarmProvider from './components/context/ContextAlarm';
-import DigitalClock from './components/DigitalClock/DigitalClock';
-import AlarmOption from './components/AlarmOption/AlarmOption';
-import Alarms from './components/alarrms/Alarms';
-import { apiUrl } from './config';
-
+import React from "react";
+import "./App.css";
+import AlarmProvider from "./components/context/ContextAlarm";
+import DigitalClock from "./components/DigitalClock/DigitalClock";
+import AlarmOption from "./components/AlarmOption/AlarmOption";
+import Alarms from "./components/alarrms/Alarms";
 function App() {
-  console.log(apiUrl);
-  
   return (
     <section className="container">
       <AlarmProvider>

@@ -33,8 +33,5 @@ export const deleteAlarmRequest = async (
 export const updateAlarmRequest = async (alarm: Alarm): Promise<Alarm> =>
   fetchData<Alarm>(`${apiUrl}/alarms/${alarm.id}`, {
     method: "PUT",
-    body: JSON.stringify({
-      ...alarm,
-      isActive: !alarm.isActive,
-    }),
+    body: JSON.stringify(alarm),
   });
