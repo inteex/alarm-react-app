@@ -1,6 +1,6 @@
 import React from "react";
 import "./modal.css";
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;

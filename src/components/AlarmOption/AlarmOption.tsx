@@ -50,8 +50,8 @@ function AlarmOption() {
           ))}
         </select>
       </div>
-      <button onClick={setAlarm} className={`setAlarm-btn`}>
-        Set Alarm
+      <button onClick={setAlarm} className={`setAlarm-btn`} data-testid="set-alarm">
+        Ajouter une alarme
       </button>
     </div>
   );

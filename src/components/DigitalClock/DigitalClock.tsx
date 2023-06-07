@@ -20,7 +20,7 @@ function DigitalClock() {
 
       </div>
 
-      <div className="clock__date">
+      <div className="clock__date" data-testid="today-date">
         {date.toLocaleDateString("fr")}
       </div>
     </div>

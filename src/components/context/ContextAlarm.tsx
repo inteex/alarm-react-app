@@ -7,7 +7,7 @@ import {
 } from "../../api/alarm";
 import { Alarm } from "../../models/alarm";
 
-interface AlarmContextType {
+export interface AlarmContextType {
   date: Date;
   alarms: Alarm[];
   ringingAlarm: Alarm | undefined;
