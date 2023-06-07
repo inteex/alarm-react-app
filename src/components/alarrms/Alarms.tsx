@@ -6,6 +6,7 @@ import Modal from "../modal/modal";
 // @ts-ignore
 import SoundFile from "../../mixkit-casino-win-alarm-and-coins-1990.mp3";
 import { Alarm } from "../../models/alarm";
+import { formatTo2Digits } from "../AlarmOption/AlarmOption";
 
 const audio = new Audio(SoundFile);
 
@@ -36,8 +37,8 @@ function Alarms() {
         (alarm) =>
           alarm.isActive &&
           !ringingAlarm &&
-          date.getHours() === parseInt(alarm.hours) &&
-          date.getMinutes() === parseInt(alarm.minutes)
+          date.getHours() === alarm.hours &&
+          date.getMinutes() === alarm.minutes
       );
     if (alarmToRing) {
       openModal();
@@ -73,7 +74,9 @@ function Alarms() {
     <div className="alarm-contianer">
       {alarms.map((alarm, index) => (
         <div key={index} className="toggle-switch">
-          <p>{`${alarm.hours}:${alarm.minutes}`}</p>
+          <p>{`${formatTo2Digits(alarm.hours)}:${formatTo2Digits(
+            alarm.minutes
+          )}`}</p>
           <div className="flex toggle-delete-container">
             <input
               className="toggle"
@@ -91,7 +94,9 @@ function Alarms() {
         </div>
       ))}
       <Modal isOpen={isModalOpen} onClose={closeModal} onConfirm={onConfirm}>
-        <p>{`Il est ${ringingAlarm?.hours}:${ringingAlarm?.minutes}`}</p>
+        <p>{`Il est ${ringingAlarm && formatTo2Digits(ringingAlarm.hours)}:${
+          ringingAlarm && formatTo2Digits(ringingAlarm.minutes)
+        }`}</p>
       </Modal>
     </div>
   );

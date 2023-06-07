@@ -1,6 +1,6 @@
 export interface Alarm{
     id: number;
-    hours: string;
-    minutes: string;
+    hours: number;
+    minutes: number;
     isActive: boolean;
 }

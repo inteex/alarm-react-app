@@ -7,8 +7,8 @@ const alarmContextMock: AlarmContextType = {
   alarms: [
     {
       id: 1,
-      hours: "21",
-      minutes: "53",
+      hours: 21,
+      minutes: 53,
       isActive: true,
     },
   ],

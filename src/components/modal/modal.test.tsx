@@ -8,7 +8,7 @@ const modalMockProps: ModalProps = {
   children: undefined,
 };
 describe("modal test", () => {
-  test("toto", async () => {
+  test("count modal buttons", async () => {
     render(<Moadl {...modalMockProps} />);
     const buttonList = await screen.findAllByRole("button");
     expect(buttonList).toHaveLength(3);
