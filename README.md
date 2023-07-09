@@ -8,6 +8,7 @@ This repository contains an alarm prototype application developed with React, Co
 
 - Node.js
 - npm or Yarn
+- [Alarm api](https://github.com/inteex/alarm-api) An Express app that manages CRUD operations.
 
 ## How to install?
 
